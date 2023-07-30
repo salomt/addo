@@ -148,6 +148,19 @@ for (const [key, { element }] of Object.entries(keys)) {
         playKey(key);
         clickedKey = key;
     });
+
+    element.addEventListener('touchstart', () => {
+      playKey(key);
+      //clickedKey = key;
+      console.log(key);
+    });
+
+    element.addEventListener('touchend', () => {
+      stopKey(key);
+      //clickedKey = key;
+      console.log(key);
+      console.log("stop");
+    });
 }
 
 // mouse up event listener
