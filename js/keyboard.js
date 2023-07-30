@@ -9,6 +9,13 @@
 
 'use strict;'
 
+// disable the context menu 
+window.oncontextmenu = function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
+};
+
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 const numPartialsPerVoice = 8;
@@ -19,7 +26,6 @@ let sliders = [];
 
 // not in use yet
 let adsr = {attack : 0.1, decay : 0.5, sustain : 0.33, decay : 0.7 };
-
 
 const pressedNotes = new Map();
 let clickedKey = '';
@@ -67,6 +73,13 @@ const keys = {
   J: { element: document.querySelector('.b'),  note: 'B',  octaveOffset: 1 },
   K: { element: document.querySelector('.c2'), note: 'C',  octaveOffset: 1 },
 };
+
+// if this is a touchscreen device, remove the letters from the keys (prevents the long press search menu)
+if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
+  for (const [key, { element }] of Object.entries(keys)) {
+      element.innerHTML = '';
+  }
+}
 
 const getHz = (note = 'A', octave = 4) => {
   const A4 = 440;
@@ -152,7 +165,6 @@ for (const [key, { element }] of Object.entries(keys)) {
     element.addEventListener('touchstart', () => {
       playKey(key);
       //clickedKey = key;
-      console.log(key);
     });
 
     element.addEventListener('touchend', () => {
