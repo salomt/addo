@@ -154,33 +154,35 @@ document.addEventListener('keyup', (e) => {
   if (!key) {
     return;
   }
+  console.log('keyup - stop ' + key);
   stopKey(key);
 });
-
 
 // mouse down event listener
 for (const [key, { element }] of Object.entries(keys)) {
     element.addEventListener('mousedown', () => {
         playKey(key);
         clickedKey = key;
+        //console.log('mouse - start ' + key);
     });
 
-    element.addEventListener('touchstart', () => {
+    element.addEventListener('touchstart', (e) => {
+      e.preventDefault();
       playKey(key);
-      //clickedKey = key;
+      //console.log('touch - start' + key);
     });
 
-    element.addEventListener('touchend', () => {
+    element.addEventListener('touchend', (e) => {
+      e.preventDefault();
       stopKey(key);
-      //clickedKey = key;
-      console.log(key);
-      console.log("stop");
+      //console.log('touch - stop ' + key);
     });
 }
 
 // mouse up event listener
-document.addEventListener('mouseup', () => {
-    stopKey(clickedKey);
+document.addEventListener('mouseup', (e) => {
+  stopKey(clickedKey);
+  //console.log('mouseup - stop ' + clickedKey);
 });
 
 
@@ -225,23 +227,22 @@ function playKey(key) {
 
 // stops note matching the given key
 function stopKey(key) {
-    
+  
     if (!keys[key]) {
         return;
     }
-    
+
     keys[key].element.classList.remove('pressed');
     const voice = pressedNotes.get(key);
-    
+
     for (var i=0; i<numPartialsPerVoice; i++) {
-
-      voice.gain[i].gain.setTargetAtTime(0, releaseTime - attackTime, releaseTime / 10);
+      voice.gain[i].gain.setTargetAtTime(0, releaseTime - attackTime, releaseTime * 0.1);
       voice.generator[i].stop(audioContext.currentTime + attackTime + releaseTime);
-
     }
-    
+
     pressedNotes.delete(key); 
     clickedKey = '';
+
 }
 
 
