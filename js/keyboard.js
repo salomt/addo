@@ -22,6 +22,9 @@ const numPartialsPerVoice = 8;
 const masterGain = 1 / numPartialsPerVoice;
 let masterOctave = 4;
 
+const attackTime = 0.001;
+const releaseTime = 0.5;
+
 let sliders = [];
 
 // not in use yet
@@ -41,7 +44,7 @@ for (var i=0; i<numPartialsPerVoice; i++) {
     slider.min = 0;
     slider.max = 1;
     slider.step = 0.01;
-    slider.value = (i == 0 ? 0.5 : 0);
+    slider.value = (i == 0 ? 0.75 : 0);
 
     // if sound is playing, change the partial gain if the slider is changed 
     slider.addEventListener('input', function () {
@@ -202,13 +205,16 @@ function playKey(key) {
             partial.frequency.value = freq * (i + 1);
         }
         let oscGain = audioContext.createGain();
-        oscGain.gain.value = sliders[i].value * masterGain; 
+        //oscGain.gain.value = sliders[i].value * masterGain; 
         partial.connect(oscGain);
         oscGain.connect(audioContext.destination);
         generator.push(partial);
         gain.push(oscGain);
         
         generator[i].start();
+
+        gain[i].gain.setValueAtTime(0, audioContext.currentTime);
+        gain[i].gain.linearRampToValueAtTime(sliders[i].value * masterGain, audioContext.currentTime + attackTime);
     }
         
     let voice = { generator: generator, gain : gain };
@@ -228,11 +234,19 @@ function stopKey(key) {
     const voice = pressedNotes.get(key);
     
     for (var i=0; i<numPartialsPerVoice; i++) {
-        voice.generator[i].stop();
+
+      voice.gain[i].gain.setTargetAtTime(0, releaseTime - attackTime, releaseTime / 10);
+      voice.generator[i].stop(audioContext.currentTime + attackTime + releaseTime);
+
     }
     
     pressedNotes.delete(key); 
     clickedKey = '';
+}
+
+
+function releaseNote(releaseTime) {
+
 }
 
 
