@@ -33,6 +33,8 @@ let adsr = {attack : 0.1, decay : 0.5, sustain : 0.33, decay : 0.7 };
 const pressedNotes = new Map();
 let clickedKey = '';
 
+let keysTouched = 0;
+
 // initialize sliders
 let sliderContainer = document.querySelector('#slider-container');
 for (var i=0; i<numPartialsPerVoice; i++) {
@@ -40,7 +42,7 @@ for (var i=0; i<numPartialsPerVoice; i++) {
     slider.classList.add('partial-slider');
     slider.classList.add(i.toString());
     slider.type = 'range';
-    slider.orient = 'vertical';
+    slider.setAttribute("orient", "vertical");  // for FireFox
     slider.min = 0;
     slider.max = 1;
     slider.step = 0.01;
@@ -168,12 +170,14 @@ for (const [key, { element }] of Object.entries(keys)) {
 
     element.addEventListener('touchstart', (e) => {
       e.preventDefault();
+      keysTouched++;
       playKey(key);
       //console.log('touch - start' + key);
     });
 
     element.addEventListener('touchend', (e) => {
       e.preventDefault();
+      keysTouched--;
       stopKey(key);
       //console.log('touch - stop ' + key);
     });
