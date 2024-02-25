@@ -156,7 +156,7 @@ document.addEventListener('keyup', (e) => {
   if (!key) {
     return;
   }
-  console.log('keyup - stop ' + key);
+  //sconsole.log('keyup - stop ' + key);
   stopKey(key);
 });
 
@@ -179,7 +179,14 @@ for (const [key, { element }] of Object.entries(keys)) {
       e.preventDefault();
       keysTouched--;
       stopKey(key);
-      //console.log('touch - stop ' + key);
+      //console.log('touchend - stop ' + key);
+    });
+
+    element.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      keysTouched--;
+      //stopKey(key);
+      //console.log('touchmove - stop ' + key);
     });
 }
 
