@@ -1,7 +1,7 @@
 # addo - simple addictive organ
 ## Description
 
-This is a simple addictive organ for web, written with javascript and css. It uses AudioContext to create sound.
+This is a simple additive organ for web, written with javascript and css. It uses AudioContext to create sound.
 
 The keyboard was coded using this tutorial: https://css-tricks.com/how-to-code-a-playable-synth-keyboard/
 
